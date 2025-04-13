@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocChain - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">DocChain</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#upload-section">Upload Document</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#verify-section">Verify Document</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#my-documents-section">My Documents</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link" id="account-display"></span>
+                    </li>
+                    <li class="nav-item">
+                        <button id="logout-btn" class="btn btn-outline-light btn-sm">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Upload Section -->
+        <section id="upload-section" class="mb-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3>Upload Document</h3>
+                </div>
+                <div class="card-body">
+                    <form id="upload-form">
+                        <div class="mb-3">
+                            <label for="document-title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="document-title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="document-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="document-description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="document-file" class="form-label">Select Document</label>
+                            <input class="form-control" type="file" id="document-file" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload to Blockchain</button>
+                    </form>
+                    <div id="upload-status" class="alert mt-3 d-none"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Verify Section -->
+        <section id="verify-section" class="mb-5">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3>Verify Document</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="verifyTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="file-tab" data-bs-toggle="tab" data-bs-target="#file" type="button" role="tab">Upload File</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="hash-tab" data-bs-toggle="tab" data-bs-target="#hash" type="button" role="tab">Enter Hash</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-3" id="verifyTabContent">
+                        <div class="tab-pane fade show active" id="file" role="tabpanel">
+                            <div class="mb-3">
+                                <label for="verify-file" class="form-label">Upload Document to Verify</label>
+                                <input class="form-control" type="file" id="verify-file">
+                            </div>
+                            <button id="verify-file-btn" class="btn btn-success">Verify Document</button>
+                        </div>
+                        <div class="tab-pane fade" id="hash" role="tabpanel">
+                            <div class="mb-3">
+                                <label for="document-hash" class="form-label">Document Hash</label>
+                                <input type="text" class="form-control" id="document-hash" placeholder="Enter the document hash">
+                            </div>
+                            <button id="verify-hash-btn" class="btn btn-success">Verify Hash</button>
+                        </div>
+                    </div>
+                    <div id="verify-result" class="mt-4 d-none">
+                        <div class="alert" id="verify-alert"></div>
+                        <div id="document-details" class="d-none">
+                            <h4>Document Details</h4>
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th>Title</th>
+                                        <td id="detail-title"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Description</th>
+                                        <td id="detail-description"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Owner</th>
+                                        <td id="detail-owner"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <td id="detail-timestamp"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Document Hash</th>
+                                        <td id="detail-hash"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button id="generate-certificate-btn" class="btn btn-primary mt-3">Generate Certificate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certificate Modal -->
+        <div class="modal fade" id="certificateModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Document Certificate</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="certificate" class="p-4 border">
+                            <div class="text-center mb-4">
+                                <h2>Document Verification Certificate</h2>
+                                <p class="text-muted">Powered by DocChain Blockchain Verification</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h4>Document Information</h4>
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th>Title</th>
+                                                <td id="cert-title"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Description</th>
+                                                <td id="cert-description"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Owner</th>
+                                                <td id="cert-owner"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Registered On</th>
+                                                <td id="cert-timestamp"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Document Hash</th>
+                                                <td id="cert-hash"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div id="cert-qrcode" class="mb-2"></div>
+                                    <small>Scan to verify</small>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <p>This document is verified on the blockchain and is authentic.</p>
+                                <p><small>Verification Date: <span id="cert-verify-date"></span></small></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="download-certificate-btn">Download Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Documents Section -->
+        <section id="my-documents-section" class="mb-5">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h3>My Documents</h3>
+                </div>
+                <div class="card-body">
+                    <div id="my-documents-loading" class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Loading your documents...</p>
+                    </div>
+                    <div id="my-documents-list" class="d-none">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Timestamp</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="documents-table-body">
+                                    <!-- Documents will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="no-documents" class="alert alert-info d-none">
+                            You haven't uploaded any documents yet.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/web3.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        // Check if user is authenticated
+        document.addEventListener('DOMContentLoaded', async function() {
+            const isConnected = await connectWallet();
+            if (!isConnected) {
+                window.location.href = 'index.html';
+            }
+            
+            // Display account address
+            document.getElementById('account-display').textContent = shortenAddress(currentAccount);
+            
+            // Setup logout button
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                logout();
+                window.location.href = 'index.html';
+            });
+            
+            // Load user documents
+            loadUserDocuments();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: 700;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #f1f5f9;
+    font-weight: 600;
+}
+
+.document-item {
+    border-bottom: 1px solid #e9ecef;
+    padding: 15px 0;
+}
+
+.document-item:last-child {
+    border-bottom: none;
+}
+
+.document-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.document-hash {
+    font-size: 0.8rem;
+    word-break: break-all;
+    color: #6c757d;
+}
+
+.document-actions {
+    margin-top: 8px;
+}
+
+.document-timestamp {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.certificate {
+    border: 2px solid #1a5fb4;
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    position: relative;
+}
+
+.certificate:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgc3Ryb2tlPSIjMWE1ZmI0IiBzdHJva2Utb3BhY2l0eT0iMC4wNSIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIiAvPjwvc3ZnPg==');
+    opacity: 0.1;
+    z-index: -1;
+}
+
+.certificate-header {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.certificate-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a5fb4;
+}
+
+.certificate-subtitle {
+    font-size: 18px;
+    color: #495057;
+}
+
+.certificate-body {
+    margin-bottom: 20px;
+}
+
+.certificate-qr {
+    margin: 15px auto;
+}
+
+.certificate-footer {
+    border-top: 1px solid #dee2e6;
+    padding-top: 15px;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+#user-address {
+    font-size: 0.85rem;
+}
+
+.verification-success {
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+    color: #0f5132;
+}
+
+.verification-failure {
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+}
